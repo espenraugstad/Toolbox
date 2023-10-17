@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, max-width=1.0, initial-scale=1.0"
+    />
+    <title>Price Per</title>
+    <style>
+      main {
+        width: 80vw;
+        margin: auto;
+      }
+
+      .item {
+        border: 1px solid black;
+        padding: 0.5rem;
+        margin: 1rem 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .itemInputs {
+        display: flex;
+        align-items: flex-end;
+        margin: 0.5rem 0;
+      }
+
+      .col {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .smallInput {
+        width: 20vw;
+        margin-right: 0.5rem;
+      }
+
+      button {
+        margin: 1rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Calculate price per unit</h1>
+      <p>
+        Quickly calculate price per unit for goods to compare and find what is
+        actually cheaper.
+      </p>
+      <div id="select" class="col">
+        <label for="baseUnit">Select base unit for comparison</label>
+        <select name="baseUnit" id="baseUnit">
+          <option value="kg">kg</option>
+          <option value="l">liters</option>
+        </select>
+      </div>
+      <div id="items">
+        <div class="item">
+          <div class="col">
+            <label for="name1">Name (optional)</label>
+            <input id="name1" type="text" />
+          </div>
+          <div class="itemInputs">
+            <span class="col"
+              ><label for="price1">Price</label>
+              <input id="price1" class="smallInput" type="number"
+            /></span>
+            <span class="col">
+              <label for="amount1">Amount</label>
+              <input id="amount1" class="smallInput" type="number" />
+            </span>
+
+            <select name="unit1" id="unit1">
+              <option value="g">g</option>
+              <option value="ml">ml</option>
+            </select>
+          </div>
+          <button id="calculate">Calculate</button>
+          <div>
+            <span>
+              Price/<span id="unitPrice1Unit"></span>:
+              <span id="unitPrice1">50</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+  <script>
+    const baseUnit = document.getElementById("baseUnit");
+    const price1 = document.getElementById("price1");
+    const amount1 = document.getElementById("amount1");
+    const unit1 = document.getElementById("unit1");
+    const calculate = document.getElementById("calculate");
+    const unitPrice1Unit = document.getElementById("unitPrice1Unit");
+    const unitPrice1 = document.getElementById("unitPrice1");
+
+    const conv = {
+      g: {
+        kg: 1000,
+      },
+      kg: {
+        g: 1 / 1000,
+      },
+    };
+
+    baseUnit.addEventListener("change", () => {
+      unitPrice1Unit.innerText = baseUnit.options[baseUnit.selectedIndex].value;
+    });
+
+    calculate.onclick = () => {
+      console.log(price1.value);
+      console.log(amount1.value);
+      console.log(unit1.options[unit1.selectedIndex].value);
+
+      console.log(
+        conv[unit1.options[unit1.selectedIndex].value][
+          baseUnit.options[baseUnit.selectedIndex].value
+        ]
+      );
+      let calculatedUnitPrice =
+        (parseFloat(price1.value) / parseFloat(amount1.value)) *
+        conv[unit1.options[unit1.selectedIndex].value][
+          baseUnit.options[baseUnit.selectedIndex].value
+        ];
+
+      unitPrice1.innerText = calculatedUnitPrice.toFixed(2);
+    };
+  </script>
+</html>
