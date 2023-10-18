@@ -19,6 +19,7 @@
         margin: 1rem 0;
         display: flex;
         flex-direction: column;
+        align-items: flex-start;
       }
 
       .itemInputs {
@@ -50,10 +51,16 @@
         Quickly calculate price per unit for goods to compare and find what is
         actually cheaper.
       </p>
-      <div id="select" class="col">
+      <div class="col">
         <label for="baseUnit">Select base unit for comparison</label>
         <select name="baseUnit" id="baseUnit">
           <option value="kg">kg</option>
+          <option value="hg">hg</option>
+          <option value="dag">dag</option>
+          <option value="g">g</option>
+          <option value="dg">dg</option>
+          <option value="cg">cg</option>
+          <option value="mg">mg</option>
           <option value="l">liters</option>
         </select>
       </div>
@@ -74,15 +81,21 @@
             </span>
 
             <select name="unit1" id="unit1">
+              <option value="kg">kg</option>
+              <option value="hg">hg</option>
+              <option value="dag">dag</option>
               <option value="g">g</option>
-              <option value="ml">ml</option>
+              <option value="dg">dg</option>
+              <option value="cg">cg</option>
+              <option value="mg">mg</option>
+              <option value="l">liters</option>
             </select>
           </div>
           <button id="calculate">Calculate</button>
           <div>
             <span>
               Price/<span id="unitPrice1Unit"></span>:
-              <span id="unitPrice1">50</span>
+              <span id="unitPrice1">-</span>
             </span>
           </div>
         </div>
@@ -98,35 +111,37 @@
     const unitPrice1Unit = document.getElementById("unitPrice1Unit");
     const unitPrice1 = document.getElementById("unitPrice1");
 
-    const conv = {
-      g: {
-        kg: 1000,
-      },
-      kg: {
-        g: 1 / 1000,
-      },
+    window.onload = () => {
+      unitPrice1Unit.innerText = baseUnit.options[baseUnit.selectedIndex].value;
     };
+
+    let conv = [];
+    let mass = ["kg", "hg", "dag", "g", "dg", "cg", "mg"];
+    for (let i = 0; i < mass.length; i++) {
+      conv[i] = [];
+      for (let j = 0; j < mass.length; j++) {
+        conv[i][j] = Math.pow(10, j - i);
+      }
+    }
+
 
     baseUnit.addEventListener("change", () => {
       unitPrice1Unit.innerText = baseUnit.options[baseUnit.selectedIndex].value;
     });
 
     calculate.onclick = () => {
-      console.log(price1.value);
-      console.log(amount1.value);
-      console.log(unit1.options[unit1.selectedIndex].value);
+      let unitStart = baseUnit.options[baseUnit.selectedIndex].value;
+      let unitStartIndex = mass.findIndex((e) => e === unitStart);
 
-      console.log(
-        conv[unit1.options[unit1.selectedIndex].value][
-          baseUnit.options[baseUnit.selectedIndex].value
-        ]
-      );
+      let unit1Goal = unit1.options[unit1.selectedIndex].value;
+      let unit1GoalIndex = mass.findIndex((e) => e === unit1Goal);
+
+      let price1Value = parseFloat(price1.value);
+      let amount1Value = parseFloat(amount1.value);
+
       let calculatedUnitPrice =
-        (parseFloat(price1.value) / parseFloat(amount1.value)) *
-        conv[unit1.options[unit1.selectedIndex].value][
-          baseUnit.options[baseUnit.selectedIndex].value
-        ];
-
+        (price1Value / amount1Value) * conv[unitStartIndex][unit1GoalIndex];
+      console.log(calculatedUnitPrice);
       unitPrice1.innerText = calculatedUnitPrice.toFixed(2);
     };
   </script>
